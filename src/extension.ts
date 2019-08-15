@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as Crates from './crates-api';
 
 export function activate(context: vscode.ExtensionContext) {
   let panel = vscode.window.createWebviewPanel(
@@ -24,8 +25,10 @@ export function activate(context: vscode.ExtensionContext) {
   panel.webview.onDidReceiveMessage(
     message => {
       switch (message.command) {
-        case 'sayHi':
-          vscode.window.showInformationMessage('Hi there');
+        case 'search':
+          Crates.search(message.query).then(({ data }) => {
+            vscode.window.showInformationMessage(data.crates[0].name);
+          })
           return;
       }
     },
@@ -45,7 +48,6 @@ function getWebviewHtml(jsUri: vscode.Uri, cssUri: vscode.Uri): string {
   <html>
     <head>
       <link href="${cssUri.toString()}" rel="stylesheet">
-      <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
     </head>
     <body>
       <div id="root"></div>
