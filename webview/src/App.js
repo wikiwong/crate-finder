@@ -1,20 +1,19 @@
 import React from 'react';
 import './App.css';
-import axios from 'axios';
+
+const vscode = acquireVsCodeApi();
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p onClick={(e) => {
-          const vscode = acquireVsCodeApi();
-          vscode.postMessage({
-            command: 'search',
-            query: 'hyper'
-          });
-        }}>
-          Click here to have some fun.
-        </p>
+        <input
+          onChange={(event) => {
+            vscode.postMessage({
+              command: 'search',
+              query: event.target.value
+            });
+        }}/>
       </header>
     </div>
   );

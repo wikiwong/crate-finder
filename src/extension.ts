@@ -6,7 +6,7 @@ export function activate(context: vscode.ExtensionContext) {
   let panel = vscode.window.createWebviewPanel(
     'crateFinder',
     'Crate Finder',
-    vscode.ViewColumn.One,
+    vscode.ViewColumn.Two,
     { enableScripts: true }
   );
   
@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
       switch (message.command) {
         case 'search':
           Crates.search(message.query).then(({ data }) => {
-            vscode.window.showInformationMessage(data.crates[0].name);
+            vscode.window.showInformationMessage(`Found crate: ${data.crates[0].name}`);
           })
           return;
       }
