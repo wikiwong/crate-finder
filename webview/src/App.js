@@ -1,20 +1,13 @@
 import React from 'react';
 import './App.css';
+import CrateSearch from './CrateSearch';
 
-const vscode = acquireVsCodeApi();
+// const vscode = acquireVsCodeApi();
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <input
-          onChange={(event) => {
-            vscode.postMessage({
-              command: 'search',
-              query: event.target.value
-            });
-        }}/>
-      </header>
+      <CrateSearch />
     </div>
   );
 }

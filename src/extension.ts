@@ -26,10 +26,15 @@ export function activate(context: vscode.ExtensionContext) {
     message => {
       switch (message.command) {
         case 'search':
-          Crates.search(message.query).then(({ data }) => {
-            vscode.window.showInformationMessage(`Found crate: ${data.crates[0].name}`);
-          })
+          Crates.search(message.query).then((crates) => {
+            // post result back to webview
+            console.log('passing crates back to webview', crates);
+            panel.webview.postMessage({ command: 'result', results: crates});
+          });
           return;
+        case 'select':
+          vscode.env.clipboard.writeText(message.selected)
+            .then((value) => console.log(value));
       }
     },
     undefined,
@@ -53,7 +58,7 @@ function getWebviewHtml(jsUri: vscode.Uri, cssUri: vscode.Uri): string {
       <div id="root"></div>
       <script src="${jsUri.toString()}"></script>
     </body>
-  </html>`
+  </html>`;
 }
 
 // this method is called when your extension is deactivated
