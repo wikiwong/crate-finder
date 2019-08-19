@@ -34,7 +34,10 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         case 'select':
           vscode.env.clipboard.writeText(message.selected)
-            .then((value) => console.log(value));
+            .then((value) => panel.webview.postMessage({
+              command: 'copied',
+              value: message.selected
+            }));
       }
     },
     undefined,

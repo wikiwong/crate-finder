@@ -2,8 +2,6 @@ import React from 'react';
 import { Input, List, Icon, Tree } from 'antd';
 import './CrateSearch.css';
 
-// import { debounce } from 'lodash';
-
 const vscode = acquireVsCodeApi();
 
 const IconText = ({ type, text }) => (
@@ -18,7 +16,9 @@ const { Search } = Input;
 class CrateSearch extends React.Component {
   state = {
     value: '',
-    results: []
+    results: [],
+    copied: '',
+    lastCopyTimeout: 0,
   };
 
   componentDidMount() {
@@ -27,6 +27,8 @@ class CrateSearch extends React.Component {
       switch (message.command) {
         case 'result':
           this.setState({ results: message.results });
+        case 'copied':
+          this.setState({ copied: message.value });
       }
     });
 
@@ -42,22 +44,44 @@ class CrateSearch extends React.Component {
       query: value
     });
     this.setState({ value });
-  };
+  }
 
   onSelect = (value) => {
     vscode.postMessage({
       command: 'select',
       selected: value[0]
     });
-  };
+  }
 
   onTitleClick = (value) => (_) => {
     vscode.postMessage({
       command: 'select',
       selected: value
     });
-    console.log(e);
-    //href={item.repository}
+  }
+
+  showCopied = (dep) => {
+    let value = 0;
+    if (this.state.copied === dep) {
+      clearTimeout(this.state.lastCopyTimeout);
+      let id = setTimeout(() => {
+        this.setState({ copied: '' });
+      }, 1500);
+
+      // showCopied is called too frequently to use setState here,
+      // but it's probably OK, since it's just book-keeping the timeouts
+      // so there isn't awkward jumps when a user clicks copy on 2 crates
+      // in quick succession.
+      this.state.lastCopyTimeout = id;
+
+      value = 1;
+    }
+    return (
+      <span style={{ opacity: value }}>
+        <span className="green"> &#10004;</span>
+        <em className="copied">copied to clipboard</em>
+      </span>
+    )
   }
 
   render() {
@@ -74,12 +98,6 @@ class CrateSearch extends React.Component {
           size="large"
           dataSource={this.state.results}
           className="crate-list"
-          // pagination={{
-          //   onChange: page => {
-          //     console.log(page);
-          //   },
-          //   pageSize: 3,
-          // }}
           renderItem={item => {
             const depString = `${item.name} = "${item.max_version}"`;
             const actions = [];
@@ -112,6 +130,7 @@ class CrateSearch extends React.Component {
                   title={(
                     <a onClick={this.onTitleClick(depString)}>
                       {depString}<Icon type="copy" style={{ marginLeft: 8 }} />
+                      {this.showCopied(depString)}
                     </a>
                   )}
                   description={item.description}
