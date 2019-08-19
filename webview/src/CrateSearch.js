@@ -1,10 +1,17 @@
 import React from 'react';
-import { Input, Tree } from 'antd';
-import { debounce } from 'lodash';
+import { Input, List, Icon, Tree } from 'antd';
+// import { debounce } from 'lodash';
 
 const vscode = acquireVsCodeApi();
 
-const { TreeNode } = Tree;
+const IconText = ({ type, text }) => (
+  <span>
+    <Icon type={type} style={{ marginRight: 8 }} />
+    {text}
+  </span>
+);
+
+// const { TreeNode } = Tree;
 const { Search } = Input;
 
 class CrateSearch extends React.Component {
@@ -43,33 +50,57 @@ class CrateSearch extends React.Component {
     });
   };
 
+  onTitleClick = (value) => (_) => {
+    vscode.postMessage({
+      command: 'select',
+      selected: value
+    });
+    console.log(e);
+    //href={item.repository}
+  }
+
   render() {
     return (
-      <div>
+      <>
         <Search
-          placeholder="input search text"
+          placeholder="search for a crate"
           size="large"
           style={{ width: '500px'}}
           onChange={this.onChange}
           onSearch={this.onSearch}
         />
-        <Tree onSelect={this.onSelect}>
-          {this.state.results.map((result) => (
-            <TreeNode
-              selectable={false}
-              title={result.name}
-              key={result.name}
-            >
-              {result.versions.map(({ num }) => (
-                <TreeNode
-                  title={num}
-                  key={`${result.name} = "${num}"`} />
-              ))}
-            </TreeNode>
-          ))}
-        </Tree>
-      </div>
-    )
+        <List
+          itemLayout="vertical"
+          size="large"
+          dataSource={this.state.results}
+          // pagination={{
+          //   onChange: page => {
+          //     console.log(page);
+          //   },
+          //   pageSize: 3,
+          // }}
+          renderItem={item => {
+            const depString = `${item.name} = "${item.max_version}"`;
+            return (
+              <List.Item
+                key={item.name}
+                style={{ textAlign: 'left' }}
+              >
+                <List.Item.Meta
+                  title={(
+                    <a onClick={this.onTitleClick(depString)}>
+                      {depString}<Icon type="copy" style={{ marginLeft: 8 }} />
+                    </a>
+                  )}
+                  description={item.description}
+                />
+                <span style={{ fontStyle: 'italic'}}>All time downloads: {item.downloads}</span>
+              </List.Item>
+            );
+          }}
+        />
+      </>
+    );
   }
 }
 
