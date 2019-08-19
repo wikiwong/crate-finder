@@ -1,5 +1,7 @@
 import React from 'react';
 import { Input, List, Icon, Tree } from 'antd';
+import './CrateSearch.css';
+
 // import { debounce } from 'lodash';
 
 const vscode = acquireVsCodeApi();
@@ -11,7 +13,6 @@ const IconText = ({ type, text }) => (
   </span>
 );
 
-// const { TreeNode } = Tree;
 const { Search } = Input;
 
 class CrateSearch extends React.Component {
@@ -61,11 +62,10 @@ class CrateSearch extends React.Component {
 
   render() {
     return (
-      <>
+      <div className="crate-input">
         <Search
-          placeholder="search for a crate"
+          placeholder="search for a crate & hit enter"
           size="large"
-          style={{ width: '500px'}}
           onChange={this.onChange}
           onSearch={this.onSearch}
         />
@@ -73,6 +73,7 @@ class CrateSearch extends React.Component {
           itemLayout="vertical"
           size="large"
           dataSource={this.state.results}
+          className="crate-list"
           // pagination={{
           //   onChange: page => {
           //     console.log(page);
@@ -81,10 +82,31 @@ class CrateSearch extends React.Component {
           // }}
           renderItem={item => {
             const depString = `${item.name} = "${item.max_version}"`;
+            const actions = [];
+            actions.push(
+              <a href={`https://crates.io/crates/${item.name}`}>
+                <IconText
+                  type="link"
+                  text="Crates.io"
+                  key="list-vertical-like-o" />
+              </a>
+            );
+            const docIcon = <a href={item.documentation}><IconText type="info-circle" text="Docs.rs" key="list-vertical-message" /></a>;
+            const repoIcon = <a href={item.repository}><IconText type="code" text="Source" key="list-vertical-message" /></a>;
+
+            const keys = [["documentation", docIcon], ["repository", repoIcon]];
+            keys.forEach((key) => {
+              if (item[key[0]]) {
+                actions.push(key[1]);
+              }
+            });
+
             return (
               <List.Item
                 key={item.name}
                 style={{ textAlign: 'left' }}
+                className="list-item"
+                actions={actions}
               >
                 <List.Item.Meta
                   title={(
@@ -93,13 +115,14 @@ class CrateSearch extends React.Component {
                     </a>
                   )}
                   description={item.description}
+
                 />
-                <span style={{ fontStyle: 'italic'}}>All time downloads: {item.downloads}</span>
+                <span class="download-count">All time downloads: {item.downloads.toLocaleString()}</span>
               </List.Item>
             );
           }}
         />
-      </>
+      </div>
     );
   }
 }

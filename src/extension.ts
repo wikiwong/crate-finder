@@ -9,7 +9,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.ViewColumn.Two,
     { enableScripts: true }
   );
-  
+
   const jsDiskPath = vscode.Uri.file(
     path.join(context.extensionPath, 'webview', 'build', 'static', 'js', 'bundle.js')
   );
@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
     jsDiskPath.with({ scheme: 'vscode-resource' }),
     cssDiskPath.with({ scheme: 'vscode-resource' })
   );
-  
+
   panel.webview.onDidReceiveMessage(
     message => {
       switch (message.command) {
@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
           Crates.search(message.query).then((crates) => {
             // post result back to webview
             console.log('passing crates back to webview', crates);
-            panel.webview.postMessage({ command: 'result', results: crates});
+            panel.webview.postMessage({ command: 'result', results: crates });
           });
           return;
         case 'select':
@@ -40,8 +40,8 @@ export function activate(context: vscode.ExtensionContext) {
     undefined,
     context.subscriptions
   );
-  
-	let disposable = vscode.commands.registerCommand('findCrate', () => {
+
+  let disposable = vscode.commands.registerCommand('findCrate', () => {
     console.log('executed find crate');
   });
   context.subscriptions.push(disposable);
@@ -62,4 +62,4 @@ function getWebviewHtml(jsUri: vscode.Uri, cssUri: vscode.Uri): string {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
