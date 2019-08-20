@@ -3,41 +3,39 @@ import * as path from 'path';
 import * as Crates from './crates-api';
 
 export function activate(context: vscode.ExtensionContext) {
-  let panel = vscode.window.createWebviewPanel(
-    'crateFinder',
-    'Crate Finder',
-    vscode.ViewColumn.Two,
-    { enableScripts: true }
-  );
-
-  const { jsUri, cssUri } = getAssets(context, false);
-  panel.webview.html = getWebviewHtml(
-    jsUri,
-    cssUri
-  );
-
-  panel.webview.onDidReceiveMessage(
-    message => {
-      switch (message.command) {
-        case 'search':
-          Crates.search(message.query).then((crates) => {
-            panel.webview.postMessage({ command: 'result', results: crates });
-          });
-          return;
-        case 'select':
-          vscode.env.clipboard.writeText(message.selected)
-            .then((_) => panel.webview.postMessage({
-              command: 'copied',
-              value: message.selected
-            }));
-      }
-    },
-    undefined,
-    context.subscriptions
-  );
-
   let disposable = vscode.commands.registerCommand('findCrate', () => {
-    console.log('executed find crate');
+    let panel = vscode.window.createWebviewPanel(
+      'crateFinder',
+      'Crate Finder',
+      vscode.ViewColumn.Two,
+      { enableScripts: true }
+    );
+  
+    const { jsUri, cssUri } = getAssets(context, false);
+    panel.webview.html = getWebviewHtml(
+      jsUri,
+      cssUri
+    );
+  
+    panel.webview.onDidReceiveMessage(
+      message => {
+        switch (message.command) {
+          case 'search':
+            Crates.search(message.query).then((crates) => {
+              panel.webview.postMessage({ command: 'result', results: crates });
+            });
+            return;
+          case 'select':
+            vscode.env.clipboard.writeText(message.selected)
+              .then((_) => panel.webview.postMessage({
+                command: 'copied',
+                value: message.selected
+              }));
+        }
+      },
+      undefined,
+      context.subscriptions
+    );
   });
   context.subscriptions.push(disposable);
 }

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Input, List, Icon, Tree } from 'antd';
+import { Input, List, Icon } from 'antd';
 import './CrateSearch.css';
+import { debounce } from 'lodash';
 
 const vscode = acquireVsCodeApi();
 
@@ -11,24 +12,31 @@ const IconText = ({ type, text }) => (
   </span>
 );
 
-const { Search } = Input;
+// const { Search } = Input;
 
 class CrateSearch extends React.Component {
+  lastCopyTimeout = 0;
+
   state = {
     value: '',
     results: [],
-    copied: '',
-    lastCopyTimeout: 0,
+    copied: ''
   };
 
   componentDidMount() {
+    this.searchBox.focus();
+
     window.addEventListener('message', event => {
       const message = event.data;
       switch (message.command) {
         case 'result':
           this.setState({ results: message.results });
+          break;
         case 'copied':
           this.setState({ copied: message.value });
+          break;
+        default:
+          return;
       }
     });
 
@@ -38,13 +46,13 @@ class CrateSearch extends React.Component {
     });
   }
 
-  onSearch = (value) => {
+  onChange = debounce((value) => {
     vscode.postMessage({
       command: 'search',
       query: value
     });
     this.setState({ value });
-  }
+  }, 200);
 
   onSelect = (value) => {
     vscode.postMessage({
@@ -63,16 +71,10 @@ class CrateSearch extends React.Component {
   showCopied = (dep) => {
     let value = 0;
     if (this.state.copied === dep) {
-      clearTimeout(this.state.lastCopyTimeout);
-      let id = setTimeout(() => {
+      clearTimeout(this.lastCopyTimeout);
+      this.lastCopyTimeout = setTimeout(() => {
         this.setState({ copied: '' });
       }, 1500);
-
-      // showCopied is called too frequently to use setState here,
-      // but it's probably OK, since it's just book-keeping the timeouts
-      // so there isn't awkward jumps when a user clicks copy on 2 crates
-      // in quick succession.
-      this.state.lastCopyTimeout = id;
 
       value = 1;
     }
@@ -87,11 +89,11 @@ class CrateSearch extends React.Component {
   render() {
     return (
       <div className="crate-input">
-        <Search
-          placeholder="search for a crate & hit enter"
+        <Input
+          placeholder="search for a crate"
           size="large"
-          onChange={this.onChange}
-          onSearch={this.onSearch}
+          onChange={({ target: { value } }) => {this.onChange(value)}}
+          ref={(input) => { this.searchBox = input; }} 
         />
         <List
           itemLayout="vertical"
@@ -128,15 +130,17 @@ class CrateSearch extends React.Component {
               >
                 <List.Item.Meta
                   title={(
-                    <a onClick={this.onTitleClick(depString)}>
-                      {depString}<Icon type="copy" style={{ marginLeft: 8 }} />
+                    <div>
+                      <a onClick={this.onTitleClick(depString)}>
+                        {depString}<Icon type="copy" style={{ marginLeft: 8 }} />
+                      </a>
                       {this.showCopied(depString)}
-                    </a>
+                    </div>
                   )}
                   description={item.description}
 
                 />
-                <span class="download-count">All time downloads: {item.downloads.toLocaleString()}</span>
+                <span className="download-count">All time downloads: {item.downloads.toLocaleString()}</span>
               </List.Item>
             );
           }}
