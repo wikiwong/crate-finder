@@ -1,5 +1,16 @@
 # crate-finder
 
-A VSCode extension that allows you to search for Rust crates without leaving your IDE.
+A VSCode extension intended to be a companion for your Rust development.
 
-*currently not functional and under development*
+## Features
+:mag: Search for Rust crates
+
+:computer: Link to code
+
+:information_source: Link to docs
+
+:clipboard: Easily copy dependencies for your Cargo.toml
+
+![CMD + SHIFT + P - "Find Crate"](https://github.com/wikiwong/crate-finder/raw/master/crate-finder-demo.gif)
+
+Thanks to [@nilslice](https://github.com/nilslice) for the help on this!
