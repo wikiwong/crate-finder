@@ -1,0 +1,20 @@
+.crate-input {
+    padding-top: 30px;
+    max-width: 500px;
+    width: 100%;
+    display: block;
+    margin: auto;
+}
+
+.list-item em {
+    font-size: 13px;
+    opacity: 80%;
+} 
+
+.green {
+    color: rgb(34, 179, 34);
+}
+
+.download-count {
+    font-size: 13px;
+}
