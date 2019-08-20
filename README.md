@@ -5,9 +5,9 @@ A VSCode extension intended to be a companion for your Rust development.
 ## Features
 :mag: Search for Rust crates
 
-:information_source: Link to code
+:computer: Link to code
 
-:link: Link to docs
+:information_source: Link to docs
 
 :clipboard: Easily copy dependencies for your Cargo.toml
 
