@@ -70,7 +70,8 @@
   "eslintConfig": {
     "extends": "react-app",
     "rules": {
-      "no-undef": "off"
+      "no-undef": "off",
+      "jsx-a11y/anchor-is-valid": "off"
     }
   },
   "browserslist": {
