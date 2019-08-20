@@ -10,16 +10,10 @@ export function activate(context: vscode.ExtensionContext) {
     { enableScripts: true }
   );
 
-  const jsDiskPath = vscode.Uri.file(
-    path.join(context.extensionPath, 'webview', 'build', 'static', 'js', 'bundle.js')
-  );
-  const cssDiskPath = vscode.Uri.file(
-    path.join(context.extensionPath, 'webview', 'build', 'static', 'css', 'main.css')
-  );
-
+  const { jsUri, cssUri } = getAssets(context, false);
   panel.webview.html = getWebviewHtml(
-    jsDiskPath.with({ scheme: 'vscode-resource' }),
-    cssDiskPath.with({ scheme: 'vscode-resource' })
+    jsUri,
+    cssUri
   );
 
   panel.webview.onDidReceiveMessage(
@@ -27,14 +21,12 @@ export function activate(context: vscode.ExtensionContext) {
       switch (message.command) {
         case 'search':
           Crates.search(message.query).then((crates) => {
-            // post result back to webview
-            console.log('passing crates back to webview', crates);
             panel.webview.postMessage({ command: 'result', results: crates });
           });
           return;
         case 'select':
           vscode.env.clipboard.writeText(message.selected)
-            .then((value) => panel.webview.postMessage({
+            .then((_) => panel.webview.postMessage({
               command: 'copied',
               value: message.selected
             }));
@@ -50,16 +42,35 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(disposable);
 }
 
-function getWebviewHtml(jsUri: vscode.Uri, cssUri: vscode.Uri): string {
+function getAssets(context: vscode.ExtensionContext, debug: boolean): { jsUri: string, cssUri: string } {
+  if (debug) {
+    return {
+      jsUri: 'http://localhost:3000/static/js/bundle.js',
+      cssUri: 'http://localhost:3000/static/css/main.css'
+    };
+  }
+  const jsDiskPath = vscode.Uri.file(
+    path.join(context.extensionPath, 'webview', 'build', 'static', 'js', 'bundle.js')
+  );
+  const cssDiskPath = vscode.Uri.file(
+    path.join(context.extensionPath, 'webview', 'build', 'static', 'css', 'main.css')
+  );
+  return {
+    jsUri: jsDiskPath.with({ scheme: 'vscode-resource' }).toString(),
+    cssUri: cssDiskPath.with({ scheme: 'vscode-resource' }).toString()
+  };
+}
+
+function getWebviewHtml(jsUri: string, cssUri: string): string {
   return `
   <!DOCTYPE html>
   <html>
     <head>
-      <link href="${cssUri.toString()}" rel="stylesheet">
+      <link href="${cssUri}" rel="stylesheet">
     </head>
     <body>
       <div id="root"></div>
-      <script src="${jsUri.toString()}"></script>
+      <script src="${jsUri}"></script>
     </body>
   </html>`;
 }
