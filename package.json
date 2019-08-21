@@ -1,16 +1,16 @@
 {
 	"name": "crate-finder",
 	"displayName": "Crate Finder",
-  "description": "Find the crates you're looking for without leaving your editor!",
-  "publisher": "wikiwong",
-  "version": "0.0.1",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wikiwong/crate-finder.git"
-  },
+	"description": "Find the crates you're looking for without leaving your editor!",
+	"publisher": "wikiwong",
+	"version": "0.0.2",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/wikiwong/crate-finder.git"
+	},
 	"engines": {
 		"vscode": "^1.36.0"
-  },
+	},
 	"categories": [
 		"Other"
 	],
