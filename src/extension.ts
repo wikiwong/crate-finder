@@ -2,6 +2,9 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as Crates from './crates-api';
 
+const devJsUri = 'http://localhost:3000/static/js/bundle.js';
+const devCssUri = 'http://localhost:3000/static/css/main.css';
+
 export function activate(context: vscode.ExtensionContext) {
   let disposable = vscode.commands.registerCommand('findCrate', () => {
     let panel = vscode.window.createWebviewPanel(
@@ -43,8 +46,8 @@ export function activate(context: vscode.ExtensionContext) {
 function getAssets(context: vscode.ExtensionContext, debug: boolean): { jsUri: string, cssUri: string } {
   if (debug) {
     return {
-      jsUri: 'http://localhost:3000/static/js/bundle.js',
-      cssUri: 'http://localhost:3000/static/css/main.css'
+      jsUri: devJsUri,
+      cssUri: devCssUri,
     };
   }
   const jsDiskPath = vscode.Uri.file(
