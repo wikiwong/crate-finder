@@ -15,3 +15,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.3]
 
 - Fix issue preventing CF from launching when no windows are opened after initial download.
+
+## [0.0.4]
+
+- Update README

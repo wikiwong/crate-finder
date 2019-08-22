@@ -3,7 +3,7 @@
 	"displayName": "Crate Finder",
 	"description": "Find the crates you're looking for without leaving your editor!",
 	"publisher": "wikiwong",
-	"version": "0.0.2",
+	"version": "0.0.4",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/wikiwong/crate-finder.git"
