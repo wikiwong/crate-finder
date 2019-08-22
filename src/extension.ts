@@ -10,7 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
     let panel = vscode.window.createWebviewPanel(
       'crateFinder',
       'Crate Finder',
-      vscode.ViewColumn.Two,
+      vscode.ViewColumn.Beside,
       { enableScripts: true }
     );
   
