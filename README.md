@@ -1,6 +1,6 @@
 # crate-finder
 
-A VSCode extension intended to be a companion for your Rust development. Discover Crates and copy dependencies for your `Cargo.toml` without leaving your editor!
+A VSCode extension intended to be a companion for your Rust development. Discover crates and copy dependencies to your `Cargo.toml` without leaving your editor!
 
 ## Features
 - Search for Rust crates
@@ -9,7 +9,7 @@ A VSCode extension intended to be a companion for your Rust development. Discove
 
 - Link to docs
 
-- Easily copy dependencies for your Cargo.toml
+- Easily copy dependencies to your `Cargo.toml`
 
 ## Usage
 CMD + SHIFT + P: "Find Crate"

@@ -19,3 +19,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.0.4]
 
 - Update README
+
+## [0.0.5]
+
+- Remove duplicative css import
+- Fix typo in README
